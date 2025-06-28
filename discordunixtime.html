@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Discord Timestamp Tool</title>
+  <style>
+    :root {
+      --discord-bg-primary: #36393f;
+      --discord-bg-secondary: #2f3136;
+      --discord-bg-tertiary: #202225;
+      --discord-text-normal: #dcddde;
+      --discord-text-muted: #72767d;
+      --discord-blurple: #5865f2;
+      --discord-blurple-hover: #4752c4;
+      --discord-green: #3ba55c;
+      --discord-red: #ed4245;
+      --discord-yellow: #faa61a;
+      --discord-interactive-normal: #b9bbbe;
+      --discord-interactive-hover: #dcddde;
+      --discord-interactive-active: #fff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Whitney', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: var(--discord-bg-primary);
+      color: var(--discord-text-normal);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+      background-color: var(--discord-bg-tertiary);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 0 rgba(4,4,5,0.2), 0 1.5px 0 rgba(6,6,7,0.05), 0 2px 0 rgba(4,4,5,0.05);
+    }
+
+    .nav-brand {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--discord-text-normal);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color 0.15s ease;
+    }
+
+    .nav-brand:hover {
+      color: var(--discord-interactive-hover);
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .nav-btn {
+      padding: 8px 16px;
+      background-color: transparent;
+      color: var(--discord-interactive-normal);
+      border: none;
+      border-radius: 3px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .nav-btn:hover {
+      background-color: var(--discord-bg-secondary);
+      color: var(--discord-interactive-hover);
+    }
+
+    .nav-btn.primary {
+      background-color: var(--discord-blurple);
+      color: white;
+    }
+
+    .nav-btn.primary:hover {
+      background-color: var(--discord-blurple-hover);
+    }
+
+    /* Main Content */
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .tool-card {
+      background-color: var(--discord-bg-secondary);
+      border-radius: 8px;
+      padding: 32px;
+      box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
+      max-width: 480px;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--discord-text-normal);
+      text-align: center;
+    }
+
+    .subtitle {
+      color: var(--discord-text-muted);
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    .picker {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+
+    select {
+      padding: 10px 12px;
+      font-size: 16px;
+      background-color: var(--discord-bg-tertiary);
+      color: var(--discord-text-normal);
+      border: 1px solid var(--discord-bg-tertiary);
+      border-radius: 3px;
+      cursor: pointer;
+      min-width: 70px;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--discord-blurple);
+    }
+
+    .generate-btn {
+      width: 100%;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 500;
+      background-color: var(--discord-blurple);
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+      margin-bottom: 16px;
+    }
+
+    .generate-btn:hover {
+      background-color: var(--discord-blurple-hover);
+    }
+
+    .generate-btn:active {
+      background-color: #3c45a5;
+    }
+
+    #preview {
+      text-align: center;
+      font-size: 14px;
+      color: var(--discord-text-muted);
+      opacity: 1;
+      transition: opacity 1s ease;
+    }
+
+    #preview.fade-out {
+      opacity: 0;
+    }
+
+    #preview code {
+      background-color: var(--discord-bg-tertiary);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 13px;
+    }
+
+    /* Supporters Page Styles */
+    .supporters-content {
+      display: none;
+    }
+
+    .supporters-list {
+      background-color: var(--discord-bg-secondary);
+      border-radius: 8px;
+      padding: 24px;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .supporter-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--discord-bg-tertiary);
+    }
+
+    .supporter-item:last-child {
+      border-bottom: none;
+    }
+
+    .supporter-avatar {
+      width: 32px;
+      height: 32px;
+      background-color: var(--discord-blurple);
+      border-radius: 50%;
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .supporter-info {
+      flex: 1;
+    }
+
+    .supporter-name {
+      font-weight: 500;
+      color: var(--discord-text-normal);
+    }
+
+    .supporter-tier {
+      font-size: 12px;
+      color: var(--discord-text-muted);
+    }
+
+    .back-btn {
+      padding: 8px 16px;
+      background-color: var(--discord-bg-tertiary);
+      color: var(--discord-text-normal);
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .back-btn:hover {
+      background-color: var(--discord-bg-primary);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .nav-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .picker {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .tool-card {
+        margin: 20px;
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <button class="nav-brand" id="homeBtn">Discord Unix Time</button>
+    <div class="nav-buttons">
+      <a href="https://www.patreon.com/LillyPK" class="nav-btn primary" target="_blank">Donate</a>
+      <a href="https://github.com/LillyPK" class="nav-btn" target="_blank">GitHub</a>
+      <a href="https://discord.gg/em36QJvv" class="nav-btn" target="_blank">Discord</a>
+      <button class="nav-btn" id="supportersBtn">Supporters</button>
+    </div>
+  </nav>
+
+  <!-- Main Tool Content -->
+  <div class="container">
+    <div class="main-content">
+      <div class="tool-card">
+        <h1>Discord Timestamp Generator</h1>
+        <p class="subtitle">Generate dynamic timestamps that adapt to each user's timezone</p>
+
+        <!-- Time selection UI -->
+        <div class="picker">
+          <select id="hour"></select>
+          <select id="minute"></select>
+          <select id="ampm">
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+          </select>
+        </div>
+
+        <!-- Action button -->
+        <button id="generate" class="generate-btn">Copy Discord Timestamp</button>
+
+        <!-- Feedback + Timezone info -->
+        <p id="preview">Timezone: <span id="timezone"></span></p>
+      </div>
+    </div>
+
+    <!-- Supporters Page Content -->
+    <div class="supporters-content">
+      <button class="back-btn" id="backBtn">← Back to Tool</button>
+      <div class="supporters-list">
+        <h1 style="margin-bottom: 20px;">Our Amazing Supporters</h1>
+        <div class="supporter-item">
+          <div class="supporter-avatar">A</div>
+          <div class="supporter-info">
+            <div class="supporter-name">Anonymous Supporter</div>
+            <div class="supporter-tier">Tier 1 Patron</div>
+          </div>
+        </div>
+        <div class="supporter-item">
+          <div class="supporter-avatar">S</div>
+          <div class="supporter-info">
+            <div class="supporter-name">Super Fan</div>
+            <div class="supporter-tier">Tier 2 Patron</div>
+          </div>
+        </div>
+        <div class="supporter-item">
+          <div class="supporter-avatar">M</div>
+          <div class="supporter-info">
+            <div class="supporter-name">Mega Supporter</div>
+            <div class="supporter-tier">Tier 3 Patron</div>
+          </div>
+        </div>
+        <p style="text-align: center; margin-top: 20px; color: var(--discord-text-muted); font-size: 14px;">
+          Thank you to all our supporters! Your contributions help keep these tools free and updated.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Grab the time selection dropdowns
+    const hourSelect = document.getElementById("hour");
+    const minuteSelect = document.getElementById("minute");
+
+    // Fill hour dropdown with values 1–12
+    for (let h = 1; h <= 12; h++) {
+      const opt = document.createElement("option");
+      opt.value = h;
+      opt.textContent = h;
+      hourSelect.appendChild(opt);
+    }
+
+    // Fill minute dropdown with values 00–59
+    for (let m = 0; m < 60; m++) {
+      const opt = document.createElement("option");
+      opt.value = m;
+      opt.textContent = m.toString().padStart(2, "0");
+      minuteSelect.appendChild(opt);
+    }
+
+    // Display the user's detected timezone on the page
+    document.getElementById("timezone").textContent =
+      Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    /**
+     * Takes selected time and calculates the next upcoming Date instance.
+     * If the selected time is earlier than now, the function picks tomorrow's time.
+     */
+    function getNextOccurrence(hour, minute, ampm) {
+      const now = new Date();
+
+      let inputHour = parseInt(hour);
+      // Convert 12-hour format to 24-hour for Date()
+      if (ampm === "PM" && inputHour !== 12) inputHour += 12;
+      if (ampm === "AM" && inputHour === 12) inputHour = 0;
+
+      // Create a new Date object with the selected time
+      const target = new Date(now);
+      target.setHours(inputHour, minute, 0, 0);
+
+      // If the selected time has already passed today, move to the next day
+      if (target <= now) {
+        target.setDate(target.getDate() + 1);
+      }
+
+      return target;
+    }
+
+    // Feedback area
+    const preview = document.getElementById("preview");
+    let fadeTimeout; // To manage fade-out timing
+
+    // When the user clicks the "Generate" button
+    document.getElementById("generate").addEventListener("click", () => {
+      const hour = hourSelect.value;
+      const minute = minuteSelect.value;
+      const ampm = document.getElementById("ampm").value;
+
+      // Compute the next upcoming instance of the selected time
+      const target = getNextOccurrence(hour, minute, ampm);
+
+      // Convert to Unix timestamp for Discord
+      const unix = Math.floor(target.getTime() / 1000);
+      const discordTag = `<t:${unix}:t>`;
+
+      // Copy to clipboard
+      navigator.clipboard.writeText(discordTag).then(() => {
+        // Cancel any previous fade timeout and reset fade-in
+        clearTimeout(fadeTimeout);
+        preview.classList.remove("fade-out");
+
+        // Show confirmation message
+        preview.innerHTML = `Copied to clipboard: <code>${discordTag}</code>`;
+
+        // Fade out message after 2 seconds
+        fadeTimeout = setTimeout(() => {
+          preview.classList.add("fade-out");
+        }, 2000);
+      });
+    });
+
+    // Page navigation functionality
+    const mainContent = document.querySelector('.main-content');
+    const supportersContent = document.querySelector('.supporters-content');
+    const supportersBtn = document.getElementById('supportersBtn');
+    const backBtn = document.getElementById('backBtn');
+    const homeBtn = document.getElementById('homeBtn');
+
+    // Show supporters page
+    supportersBtn.addEventListener('click', () => {
+      mainContent.style.display = 'none';
+      supportersContent.style.display = 'block';
+    });
+
+    // Back to main tool
+    backBtn.addEventListener('click', () => {
+      supportersContent.style.display = 'none';
+      mainContent.style.display = 'block';
+    });
+
+    // Home button functionality
+    homeBtn.addEventListener('click', () => {
+      supportersContent.style.display = 'none';
+      mainContent.style.display = 'block';
+    });
+  </script>
+
+</body>
+</html>
