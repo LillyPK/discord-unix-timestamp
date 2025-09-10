@@ -4,354 +4,105 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Discord Timestamp Tool</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    :root {
-      --discord-bg-primary: #36393f;
-      --discord-bg-secondary: #2f3136;
-      --discord-bg-tertiary: #202225;
-      --discord-text-normal: #dcddde;
-      --discord-text-muted: #72767d;
-      --discord-blurple: #5865f2;
-      --discord-blurple-hover: #4752c4;
-      --discord-green: #3ba55c;
-      --discord-red: #ed4245;
-      --discord-yellow: #faa61a;
-      --discord-interactive-normal: #b9bbbe;
-      --discord-interactive-hover: #dcddde;
-      --discord-interactive-active: #fff;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Whitney', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background-color: var(--discord-bg-primary);
-      color: var(--discord-text-normal);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* Navigation Bar */
-    .navbar {
-      background-color: var(--discord-bg-tertiary);
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 1px 0 rgba(4,4,5,0.2), 0 1.5px 0 rgba(6,6,7,0.05), 0 2px 0 rgba(4,4,5,0.05);
-    }
-
-    .nav-brand {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--discord-text-normal);
-      background: none;
-      border: none;
-      cursor: pointer;
-      transition: color 0.15s ease;
-    }
-
-    .nav-brand:hover {
-      color: var(--discord-interactive-hover);
-    }
-
-    .nav-buttons {
-      display: flex;
-      gap: 12px;
-    }
-
-    .nav-btn {
-      padding: 8px 16px;
-      background-color: transparent;
-      color: var(--discord-interactive-normal);
-      border: none;
-      border-radius: 3px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .nav-btn:hover {
-      background-color: var(--discord-bg-secondary);
-      color: var(--discord-interactive-hover);
-    }
-
-    .nav-btn.primary {
-      background-color: var(--discord-blurple);
-      color: white;
-    }
-
-    .nav-btn.primary:hover {
-      background-color: var(--discord-blurple-hover);
-    }
-
-    /* Main Content */
-    .container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-    }
-
-    .tool-card {
-      background-color: var(--discord-bg-secondary);
-      border-radius: 8px;
-      padding: 32px;
-      box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
-      max-width: 480px;
-      width: 100%;
-    }
-
-    h1 {
-      font-size: 24px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: var(--discord-text-normal);
-      text-align: center;
-    }
-
-    .subtitle {
-      color: var(--discord-text-muted);
-      text-align: center;
-      margin-bottom: 24px;
-      font-size: 14px;
-    }
-
-    .picker {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-      justify-content: center;
-    }
-
-    select {
-      padding: 10px 12px;
-      font-size: 16px;
-      background-color: var(--discord-bg-tertiary);
-      color: var(--discord-text-normal);
-      border: 1px solid var(--discord-bg-tertiary);
-      border-radius: 3px;
-      cursor: pointer;
-      min-width: 70px;
-    }
-
-    select:focus {
-      outline: none;
-      border-color: var(--discord-blurple);
-    }
-
-    .generate-btn {
-      width: 100%;
-      padding: 12px 24px;
-      font-size: 16px;
-      font-weight: 500;
-      background-color: var(--discord-blurple);
-      color: white;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: background-color 0.15s ease;
-      margin-bottom: 16px;
-    }
-
-    .generate-btn:hover {
-      background-color: var(--discord-blurple-hover);
-    }
-
-    .generate-btn:active {
-      background-color: #3c45a5;
-    }
-
-    #preview {
-      text-align: center;
-      font-size: 14px;
-      color: var(--discord-text-muted);
-      opacity: 1;
-      transition: opacity 1s ease;
-    }
-
-    #preview.fade-out {
-      opacity: 0;
-    }
-
-    #preview code {
-      background-color: var(--discord-bg-tertiary);
-      padding: 2px 6px;
-      border-radius: 3px;
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-      font-size: 13px;
-    }
-
-    /* Supporters Page Styles */
-    .supporters-content {
-      display: none;
-    }
-
-    .supporters-list {
-      background-color: var(--discord-bg-secondary);
-      border-radius: 8px;
-      padding: 24px;
-      max-width: 600px;
-      width: 100%;
-    }
-
-    .supporter-item {
-      display: flex;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--discord-bg-tertiary);
-    }
-
-    .supporter-item:last-child {
-      border-bottom: none;
-    }
-
-    .supporter-avatar {
-      width: 32px;
-      height: 32px;
-      background-color: var(--discord-blurple);
-      border-radius: 50%;
-      margin-right: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .supporter-info {
-      flex: 1;
-    }
-
-    .supporter-name {
-      font-weight: 500;
-      color: var(--discord-text-normal);
-    }
-
-    .supporter-tier {
-      font-size: 12px;
-      color: var(--discord-text-muted);
-    }
-
-    .back-btn {
-      padding: 8px 16px;
-      background-color: var(--discord-bg-tertiary);
-      color: var(--discord-text-normal);
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-      margin-bottom: 20px;
-      font-size: 14px;
-    }
-
-    .back-btn:hover {
-      background-color: var(--discord-bg-primary);
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .navbar {
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .nav-buttons {
-        flex-wrap: wrap;
-        justify-content: center;
-      }
-
-      .picker {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .tool-card {
-        margin: 20px;
-        padding: 24px;
-      }
-    }
+    #preview { transition: opacity 1s ease; }
+    #preview.fade-out { opacity: 0; }
   </style>
 </head>
-<body>
+<body class="min-h-screen bg-slate-900 text-slate-200">
 
   <!-- Navigation Bar -->
-  <nav class="navbar">
-    <button class="nav-brand" id="homeBtn">Discord Unix Time</button>
-    <div class="nav-buttons">
-      <a href="https://www.patreon.com/LillyPK" class="nav-btn primary" target="_blank">Donate</a>
-      <a href="https://github.com/LillyPK" class="nav-btn" target="_blank">GitHub</a>
-      <a href="https://discord.gg/mFG8EzbpvA" class="nav-btn" target="_blank">Discord</a>
-      <button class="nav-btn" id="supportersBtn">Supporters</button>
+  <nav class="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-900/80 backdrop-blur">
+    <div class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3 md:flex-nowrap">
+      <button id="homeBtn" class="text-sm font-semibold text-slate-200 transition-colors hover:text-white">
+        Discord Unix Time
+      </button>
+      <div class="flex w-full items-center justify-between gap-2 md:w-auto md:justify-end">
+        <a href="https://www.patreon.com/LillyPK" target="_blank"
+           class="inline-flex h-9 items-center justify-center rounded-md bg-indigo-500 px-4 text-sm font-medium text-white transition-colors hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900">
+          Donate
+        </a>
+        <a href="https://github.com/LillyPK" target="_blank"
+           class="inline-flex h-9 items-center justify-center rounded-md px-4 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900">
+          GitHub
+        </a>
+        <a href="https://discord.gg/mFG8EzbpvA" target="_blank"
+           class="inline-flex h-9 items-center justify-center rounded-md px-4 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900">
+          Discord
+        </a>
+        <button id="supportersBtn"
+                class="inline-flex h-9 items-center justify-center rounded-md px-4 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900">
+          Supporters
+        </button>
+      </div>
     </div>
   </nav>
 
   <!-- Main Tool Content -->
-  <div class="container">
+  <main class="mx-auto max-w-5xl px-4 py-8">
     <div class="main-content">
-      <div class="tool-card">
-        <h1>Discord Timestamp Generator</h1>
-        <p class="subtitle">Generate dynamic timestamps that adapt to each user's timezone</p>
+      <div class="mx-auto max-w-md">
+        <div class="rounded-lg border border-slate-800 bg-slate-800/60 p-6 shadow">
+          <h1 class="text-center text-xl font-semibold">Discord Timestamp Generator</h1>
+          <p class="mt-1 text-center text-sm text-slate-400">Generate dynamic timestamps that adapt to each user's timezone</p>
 
-        <!-- Time selection UI -->
-        <div class="picker">
-          <select id="hour"></select>
-          <select id="minute"></select>
-          <select id="ampm">
-            <option value="AM">AM</option>
-            <option value="PM">PM</option>
-          </select>
+          <!-- Time selection UI -->
+          <div class="mt-5 grid grid-cols-3 gap-3">
+            <label for="hour" class="sr-only">Hour</label>
+            <select id="hour" class="h-10 w-full rounded-md border border-slate-700 bg-slate-900 px-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"></select>
+
+            <label for="minute" class="sr-only">Minute</label>
+            <select id="minute" class="h-10 w-full rounded-md border border-slate-700 bg-slate-900 px-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"></select>
+
+            <label for="ampm" class="sr-only">AM or PM</label>
+            <select id="ampm" class="h-10 w-full rounded-md border border-slate-700 bg-slate-900 px-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>
+          </div>
+
+          <!-- Action button -->
+          <button id="generate" class="mt-4 inline-flex h-11 w-full items-center justify-center rounded-md bg-indigo-500 px-4 text-sm font-medium text-white transition-colors hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900">Copy Discord Timestamp</button>
+
+          <!-- Feedback + Timezone info -->
+          <p id="preview" class="mt-3 text-center text-sm text-slate-400">Timezone: <span id="timezone"></span></p>
         </div>
-
-        <!-- Action button -->
-        <button id="generate" class="generate-btn">Copy Discord Timestamp</button>
-
-        <!-- Feedback + Timezone info -->
-        <p id="preview">Timezone: <span id="timezone"></span></p>
       </div>
     </div>
 
     <!-- Supporters Page Content -->
-    <div class="supporters-content">
-      <button class="back-btn" id="backBtn">← Back to Tool</button>
-      <div class="supporters-list">
-        <h1 style="margin-bottom: 20px;">Our Amazing Supporters</h1>
-        <div class="supporter-item">
-          <div class="supporter-avatar">A</div>
-          <div class="supporter-info">
-            <div class="supporter-name">Anonymous Supporter</div>
-            <div class="supporter-tier">Tier 1 Patron</div>
+    <div class="supporters-content" style="display:none;">
+      <div class="mx-auto mb-4 max-w-md">
+        <button id="backBtn" class="inline-flex h-9 items-center justify-center rounded-md px-3 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900">← Back to Tool</button>
+      </div>
+      <div class="supporters-list mx-auto max-w-lg rounded-lg border border-slate-800 bg-slate-800/60 p-6 shadow">
+        <h1 class="mb-4 text-center text-xl font-semibold">Our Amazing Patrons</h1>
+        <div class="supporter-item flex items-center border-b border-slate-800 py-3 last:border-b-0">
+          <div class="supporter-avatar mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500 font-semibold">A</div>
+          <div class="supporter-info flex-1">
+            <div class="supporter-name font-medium">Your</div>
+            <div class="supporter-tier text-sm text-slate-400">Tier 1 Patron</div>
           </div>
         </div>
-        <div class="supporter-item">
-          <div class="supporter-avatar">S</div>
-          <div class="supporter-info">
-            <div class="supporter-name">Super Fan</div>
-            <div class="supporter-tier">Tier 2 Patron</div>
+        <div class="supporter-item flex items-center border-b border-slate-800 py-3 last:border-b-0">
+          <div class="supporter-avatar mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500 font-semibold">S</div>
+          <div class="supporter-info flex-1">
+            <div class="supporter-name font-medium">Name</div>
+            <div class="supporter-tier text-sm text-slate-400">Tier 2 Patron</div>
           </div>
         </div>
-        <div class="supporter-item">
-          <div class="supporter-avatar">M</div>
-          <div class="supporter-info">
-            <div class="supporter-name">Mega Supporter</div>
-            <div class="supporter-tier">Tier 3 Patron</div>
+        <div class="supporter-item flex items-center border-b border-slate-800 py-3 last:border-b-0">
+          <div class="supporter-avatar mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500 font-semibold">M</div>
+          <div class="supporter-info flex-1">
+            <div class="supporter-name font-medium">Here</div>
+            <div class="supporter-tier text-sm text-slate-400">Tier 3 Patron</div>
           </div>
         </div>
-        <p style="text-align: center; margin-top: 20px; color: var(--discord-text-muted); font-size: 14px;">
-          Thank you to all our supporters! Your contributions help keep these tools free and updated.
-        </p>
+        <p class="mt-4 text-center text-sm text-slate-400">Thank you to all our supporters! Your contributions help keep these tools free and updated.</p>
       </div>
     </div>
-  </div>
+  </main>
 
   <script>
     // Grab the time selection dropdowns
@@ -426,7 +177,7 @@
         preview.classList.remove("fade-out");
 
         // Show confirmation message
-        preview.innerHTML = `Copied to clipboard: <code>${discordTag}</code>`;
+        preview.innerHTML = `Copied to clipboard: <code class="rounded bg-slate-800 px-1 py-0.5 font-mono text-[13px]">${discordTag}</code>`;
 
         // Fade out message after 2 seconds
         fadeTimeout = setTimeout(() => {
@@ -463,3 +214,4 @@
 
 </body>
 </html>
+
